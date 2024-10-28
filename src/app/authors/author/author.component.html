@@ -1,0 +1,21 @@
+<form (ngSubmit)="searchAuthor()">
+    <label for="authorId">Author ID:</label>
+    <input type="text" id="authorId" [(ngModel)]="authorId" name="authorId" required>
+    <button type="submit">Search</button>
+  </form>
+  
+  <div *ngIf="selectedAuthor">
+    <h3>Author Details</h3>
+    <p><strong>ID:</strong> {{ selectedAuthor.id }}</p>
+    <p><strong>Name:</strong> {{ selectedAuthor.firstName }} {{ selectedAuthor.lastName }}</p>
+  
+    <h4>Books:</h4>
+    <ul>
+      <li *ngFor="let book of selectedAuthor.books">
+        {{ book.title }} 
+      </li>
+    </ul>
+  </div>
+  
+  <p *ngIf="!selectedAuthor && message">{{ message }}</p>
+  

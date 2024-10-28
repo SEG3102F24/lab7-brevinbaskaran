@@ -1,37 +1,45 @@
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
-import { AuthorService } from './services/author.service';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { Author } from './model/author';
+import { AuthorsService } from './service/authors.service';
+import { Subscription } from 'rxjs';
+import { NgIf } from '@angular/common';
+import { RouterModule } from '@angular/router'; 
 
 @Component({
   selector: 'app-authors',
-  standalone: true,
-  imports: [FormsModule, CommonModule], 
   templateUrl: './authors.component.html',
-  styleUrls: ['./authors.component.css']
+  styleUrls: ['./authors.component.css'],
+  standalone: true,
+  imports: [NgIf, RouterModule] 
 })
-export class AuthorsComponent {
-  authorId: string = '';
-  author: any;
-  message: string = '';
+export class AuthorsComponent implements OnInit, OnDestroy {
+  selectedAuthor: Author | null = null; 
+  message: string = ''; 
+  private subscription!: Subscription;
+  private authorsService: AuthorsService = inject(AuthorsService);
 
-  constructor(private authorService: AuthorService) {}
+  ngOnInit(): void {
+   
+  }
 
-  searchAuthor() {
-    this.authorService.getAuthorById(this.authorId).subscribe(
-      data => {
-        if (data) {
-          this.author = data;
-          this.message = '';
-        } else {
-          this.message = 'Author not found.';
-          this.author = null;
+  submit(authorId: string): void {
+    if (authorId) {
+      this.subscription = this.authorsService.getAuthor(authorId).subscribe({
+        next: (data: Author) => {
+          this.selectedAuthor = data; 
+          this.message = ''; 
+        },
+        error: () => {
+          this.selectedAuthor = null; 
+          this.message = 'Author not found'; 
         }
-      },
-      error => {
-        this.message = 'An error occurred while searching for the author.';
-        this.author = null;
-      }
-    );
+      });
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 }

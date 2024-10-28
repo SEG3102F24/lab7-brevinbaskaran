@@ -1,14 +1,21 @@
-<form (ngSubmit)="searchAuthor()">
-    <label for="authorId">Author ID:</label>
-    <input type="text" id="authorId" [(ngModel)]="authorId" name="authorId" required>
-    <button type="submit">Search</button>
-  </form>
-  
-  <div *ngIf="author">
-    <h3>Author Details</h3>
-    <p>ID: {{ author.id }}</p>
-    <p>Name: {{ author.name }}</p>
+<div>
+  <h2>Search Authors</h2>
+  <div>
+    <label for="id">Author ID:</label>
+    <input type="text" #authorQuery id="id">
+    <button (click)="submit(authorQuery.value)">Search</button>
   </div>
   
-  <p *ngIf="message">{{ message }}</p>
+  <div *ngIf="selectedAuthor">
+    <h3>Author Details</h3>
+    <p><strong>ID:</strong> {{ selectedAuthor.id }}</p>
+    <p><strong>Name:</strong> {{ selectedAuthor.firstName }} {{ selectedAuthor.lastName }}</p>
+
+  </div>
   
+  <p *ngIf="!selectedAuthor && message">{{ message }}</p>
+
+  <div class="container">
+    <router-outlet></router-outlet>
+  </div>
+</div>
